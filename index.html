@@ -69,6 +69,7 @@ h1 {
     line-height: 1.5;
     opacity: 0;
     transition: opacity 0.6s ease 0.4s;
+    transform: translateY(10px);
     z-index: 1;
     overflow: hidden; /* чтобы ничего не вылезало */
 }
@@ -173,6 +174,19 @@ h1 {
 .seal-text.show {
     opacity: 1;
 }
+.march8 {
+    position: absolute;
+    top: 60%;
+    left: 50%;
+    transform: translate(-50%, 10px);
+
+    font-size: 22px;
+    font-weight: bold;
+    color: #e75480;
+
+    opacity: 0;
+    transition: 0.5s ease;
+}
 #openTitle {
     transition: opacity 0.8s ease;
 }
@@ -185,6 +199,7 @@ h1 {
 
 <body>
 
+
 <h1 id="openTitle">Открой конверт 💌</h1>
 
 <div class="envelope" onclick="openEnvelope(this)">
@@ -196,34 +211,52 @@ h1 {
 	</div>
     </div>
 </div>
- <div class="seal-text" id="sealText">
-        С 8 марта 💝
-    </div>
+<div class="march8" id="marchText">С 8 марта 💗</div>
 </div>
 <script>
-function openEnvelope(el){
+function openEnvelope(el) {
 
-    // скрываем надпись
-    document.getElementById("openTitle").classList.add("hide");
+    const marchText = document.getElementById("marchText");
+    const lines = document.querySelectorAll(".letter div");
 
-    el.classList.add("open");
+    if (el.classList.contains("open")) {
 
-    const lines = document.querySelectorAll(".line");
-
-    lines.forEach((line, index) => {
-        setTimeout(() => {
-            line.classList.add("show");
-        }, 3000 * (index + 1));
-    });
-
-    // 3 строки = 9 сек + 3 сек пауза
-    setTimeout(() => {
+        // ЗАКРЫВАЕМ
         el.classList.remove("open");
-    }, 12000);
 
-    setTimeout(() => {
-        document.getElementById("sealText").classList.add("show");
-    }, 12800);
+        // Скрываем строки
+        lines.forEach(line => {
+            line.style.opacity = "0";
+            line.style.transform = "translateY(10px)";
+        });
+
+        // Скрываем поздравление
+        if (marchText) {
+            marchText.style.opacity = "0";
+            marchText.style.transform = "translateY(10px)";
+        }
+
+    } else {
+
+        // ОТКРЫВАЕМ
+        el.classList.add("open");
+
+        // Поочерёдно показываем строки
+        lines.forEach((line, index) => {
+            setTimeout(() => {
+                line.style.opacity = "1";
+                line.style.transform = "translateY(0)";
+            }, 2000 * (index + 1));
+        });
+
+        // Через 3 секунды после последней строки
+        setTimeout(() => {
+            if (marchText) {
+                marchText.style.opacity = "1";
+                marchText.style.transform = "translateY(0)";
+            }
+        }, 2000 * lines.length + 3000);
+    }
 }
 
 /* Генерация лепестков */
